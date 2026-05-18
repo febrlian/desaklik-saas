@@ -1,0 +1,23 @@
+# We use bitnami keycloak helm chart in actual deployment,
+# this is a placeholder for the Keycloak Realm configuration configmap.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: keycloak-realm-config
+  namespace: desaklik
+data:
+  realm.json: |
+    {
+      "realm": "desaklik",
+      "enabled": true,
+      "roles": {
+        "realm": [
+          { "name": "KepalaDesa" },
+          { "name": "Sekretaris" },
+          { "name": "Kasi" },
+          { "name": "Operator" },
+          { "name": "Warga" },
+          { "name": "SuperAdmin" }
+        ]
+      }
+    }
