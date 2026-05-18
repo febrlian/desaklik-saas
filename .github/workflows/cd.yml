@@ -1,0 +1,57 @@
+name: CD
+
+on:
+  push:
+    branches: [ main ]
+
+env:
+  AWS_REGION: ap-southeast-1
+  ECR_REPOSITORY_WEB: desaklik-web
+  ECR_REPOSITORY_API: desaklik-api
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-and-test # Assuming a dependency on CI
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: arn:aws:iam::123456789012:role/my-github-actions-role
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Build, tag, and push WEB image to Amazon ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_WEB:$IMAGE_TAG -f apps/web/Dockerfile .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY_WEB:$IMAGE_TAG
+
+    - name: Build, tag, and push API image to Amazon ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_API:$IMAGE_TAG -f apps/api/Dockerfile .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY_API:$IMAGE_TAG
+
+    - name: Update K8s Manifests (ArgoCD trigger)
+      run: |
+        # In a real scenario, this would update the image tags in the K8s manifests
+        # and push them to the repository, triggering ArgoCD to sync.
+        echo "Updating image tags to ${{ github.sha }}"
+        # sed -i "s|<ECR_URL>/desaklik-web:latest|$ECR_REGISTRY/$ECR_REPOSITORY_WEB:$IMAGE_TAG|g" k8s/base/deployment.yaml
+        # sed -i "s|<ECR_URL>/desaklik-api:latest|$ECR_REGISTRY/$ECR_REPOSITORY_API:$IMAGE_TAG|g" k8s/base/deployment.yaml
+        # git config --global user.name 'GitHub Actions'
+        # git config --global user.email 'actions@github.com'
+        # git commit -am "Update image tags to ${{ github.sha }}"
+        # git push

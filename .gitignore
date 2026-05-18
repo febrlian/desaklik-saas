@@ -1,0 +1,15 @@
+node_modules
+dist
+.next
+coverage
+.env
+.env.local
+.turbo
+*.log
+apps/web/node_modules
+apps/mobile/node_modules
+apps/api/node_modules
+apps/web/.next
+packages/ui/node_modules
+apps/**/node_modules
+packages/**/node_modules
