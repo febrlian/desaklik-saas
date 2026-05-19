@@ -1,56 +1,40 @@
-# DesaKlik Build Phases Tracker
+# Phase 0 Execution Backlog (Reset-Aligned)
 
-## PHASE 0: Foundation (Week 1-2) - COMPLETED 🟢
-- [x] Terraform: VPC, EKS, RDS, ElastiCache, ECR
-- [x] K8s manifests: namespaces, ingress, cert-manager, keycloak configmap
-- [x] Next.js 14 monorepo (Turborepo): apps/web, apps/mobile, packages/ui, apps/api
-- [x] Tailwind with Stitch MCP tokens in `packages/ui`
-- [x] Prisma ORM: tenants table, RLS policies, audit triggers
-- [x] CI/CD: GitHub Actions build, test, and deploy pipelines
-- [x] Storybook setup
-- [x] INFRA_SETUP.md deployment guide
+This tracker is aligned to `docs/phase-0/*` and intentionally avoids premature complexity.
 
-## PHASE 1: Landing Page + Tenant Onboarding (Week 3-4)
-- [ ] Landing Page UI (Hero, Features, Pricing, Testimonials, Footer)
-- [ ] Tenant Registration Wizard (5 steps)
-- [ ] Owner Panel — Tenant Management UI
+## How to use this file
 
-## PHASE 2: Village Admin Panel — Core CRM (Week 5-8)
-- [ ] Dashboard Home (Stats, Charts, Feed)
-- [ ] Persuratan Module (Surat list, Wizard, Template editor, Arsip)
-- [ ] Warga Module (Household list, Detail panel, Dukcapil sync, Analytics)
-- [ ] Kewilayahan Module (Interactive map, Boundary editor, Route planner)
-- [ ] Settings (Profile, Staff, Roles, Workflows, Billing)
+- Work top-to-bottom unless blocked.
+- Each item is sized to roughly **0.5–2 days**.
+- Mark done only when **Acceptance Criteria** and **DoD** are met.
 
-## PHASE 3: Citizen Portal + Mobile App (Week 9-11)
-- [ ] Public Page (Hero, Quick Services, Transparency Dashboard, Map, Contact)
-- [ ] Citizen Mobile App (Onboarding, Home, Service Request, Status, Profile)
-- [ ] WhatsApp Business API Integration
-- [ ] Form Builder UI and Logic
+## Backlog
 
-## PHASE 4: APBDes + BUMDes + Pemerintahan (Week 12-14)
-- [ ] APBDes Module (Dashboard, Real-time progress, Transaction log)
-- [ ] BUMDes Module (Unit list, Financial reports, Supply chain)
-- [ ] Pemerintahan Module (Produk Hukum, Org chart, Meetings, Aspirasi Warga)
-- [ ] Publikasi + Kelembagaan (Calendar, News, Organization registry)
+| ID | Task | Est. | Depends On | Acceptance Criteria | DoD |
+|---|---|---:|---|---|---|
+| P0-01 | Baseline repo cleanup + script sanity (`pnpm` scripts run, dead references removed) | 0.5d | None | All root scripts execute without missing-file errors | Commands and outputs documented in PR notes |
+| P0-02 | Define module boundaries in code folders (`apps/api/src/modules/*`) | 1d | P0-01 | Modules mapped to architecture doc with no cross-module direct DB access | Directory + README stubs merged |
+| P0-03 | Tenant context middleware and request-scoped `tenant_id` enforcement | 1d | P0-02 | Every tenant-scoped endpoint requires tenant context | Automated tests cover allow/deny paths |
+| P0-04 | Shared-schema multi-tenant DB conventions (migrations, composite indexes) | 1d | P0-03 | Tables include tenant convention fields and core composite indexes | Migration up/down verified on local DB |
+| P0-05 | Background jobs skeleton (queue + worker + retry/DLQ policy) | 1d | P0-03 | At least 3 job types run async: document generation, notification dispatch, CSV import | Queue metrics visible in logs/metrics |
+| P0-06 | Minimal observability baseline (request id, structured logs, latency/error metrics) | 1d | P0-03 | p50/p95 latency + error rate dashboards available | Runbook for alert response committed |
+| P0-07 | Performance budget checks in CI (API latency smoke + bundle budget) | 0.5d | P0-06 | CI fails when thresholds exceeded | Thresholds documented in implementation plan |
+| P0-08 | Backup/restore drill script and verification checklist | 0.5d | P0-04 | Successful restore to clean environment with integrity checks | Drill date + result recorded |
+| P0-09 | Capacity milestone playbook (1k/10k/30k/83k villages) as runbook docs | 1d | P0-04, P0-06 | Runbook defines trigger metrics and exact next actions per milestone | Linked from architecture + implementation docs |
+| P0-10 | Service extraction scorecard + decision template | 0.5d | P0-02, P0-06 | Measurable extraction thresholds published and review cadence defined | Template used in one example review |
+| P0-11 | National onboarding risk register operationalization | 1d | P0-09 | Top risks have owner, signal, mitigation, fallback | Monthly review cadence documented |
+| P0-12 | Phase 0 exit review and sign-off | 0.5d | P0-01..P0-11 | All mandatory checklists complete with evidence links | Sign-off note published in docs |
 
-## PHASE 5: Kecamatan + Kabupaten Dashboards (Week 15-17)
-- [ ] Kecamatan Dashboard (Overview, Village monitoring, Coordination)
-- [ ] Kabupaten Dashboard (Executive overview, Drill-down map, Policy tracking)
-- [ ] Hierarchical Data Flow (Aggregation and Distribution logic)
+## Current Priority Sequence
 
-## PHASE 6: Owner Panel + Platform Operations (Week 18-19)
-- [ ] Owner Dashboard (Stats, MRR, Health status)
-- [ ] Tenant Management (Impersonation, Settings, Plan editor)
-- [ ] Billing Module (Invoices, Payment gateways, Reporting)
-- [ ] System Admin (Roles, API keys, Webhooks, Feature flags)
-- [ ] Analytics (Platform-wide analytics, Custom reports)
-- [ ] Support Ticket System
+1. P0-01 → P0-04 (tenant-safe core)
+2. P0-05 → P0-07 (async + observability)
+3. P0-08 → P0-11 (resilience + scale-readiness)
+4. P0-12 (formal exit)
 
-## PHASE 7: Polish + Performance + Launch (Week 20)
-- [ ] Performance Optimization (Core Web Vitals, Bundle analysis)
-- [ ] Security Audit (Pen test, Rate limiting, DR drill)
-- [ ] Accessibility Audit (WCAG AA, Keyboard navigation)
-- [ ] Mobile PWA Polish
-- [ ] Documentation (API docs, User manuals)
-- [ ] Launch Execution
+## Explicit Not-Now (Phase 0)
+
+- Kubernetes/EKS as default runtime
+- Service mesh
+- Multi-region active-active
+- Breaking modular monolith into many services without threshold evidence
