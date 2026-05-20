@@ -10,7 +10,9 @@ export class QueueLogger {
     });
 
     events.on('completed', ({ jobId, returnvalue }) => {
-      logger.log(`Job ID [${jobId}] completed. Result: ${JSON.stringify(returnvalue)}`);
+      logger.log(
+        `Job ID [${jobId}] completed. Result: ${JSON.stringify(returnvalue)}`,
+      );
     });
 
     events.on('failed', ({ jobId, failedReason }) => {

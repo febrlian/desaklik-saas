@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { DocumentWorker } from './document.worker';
+import { DocumentWorker, DocumentGeneratePayload } from './document.worker';
 import { JOB_NAMES } from '../../common/queue/job-types';
 import { Job } from 'bullmq';
 
@@ -18,10 +18,16 @@ describe('DocumentWorker', () => {
     const job = {
       name: JOB_NAMES.DOCUMENT_GENERATE,
       id: 'job-1',
-      data: { tenantId: 'tenant-1', templateId: 'tpl-1' }
-    } as Job;
+      data: {
+        tenantId: 'tenant-1',
+        templateId: 'tpl-1',
+      } as DocumentGeneratePayload,
+    } as unknown as Job<DocumentGeneratePayload, any, string>;
 
-    const result = await worker.process(job);
+    const result = (await worker.process(job)) as {
+      status: string;
+      documentUrl: string;
+    };
     expect(result.status).toBe('success');
     expect(result.documentUrl).toContain('tenant-1');
   });
@@ -30,9 +36,15 @@ describe('DocumentWorker', () => {
     const job = {
       name: JOB_NAMES.DOCUMENT_GENERATE,
       id: 'job-2',
-      data: { tenantId: 'tenant-1', templateId: 'tpl-1', data: { throwFatal: true } }
-    } as Job;
+      data: {
+        tenantId: 'tenant-1',
+        templateId: 'tpl-1',
+        data: { throwFatal: true },
+      } as DocumentGeneratePayload,
+    } as unknown as Job<DocumentGeneratePayload, any, string>;
 
-    await expect(worker.process(job)).rejects.toThrow('FATAL: Invalid template format');
+    await expect(worker.process(job)).rejects.toThrow(
+      'FATAL: Invalid template format',
+    );
   });
 });

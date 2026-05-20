@@ -1,4 +1,9 @@
-import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  OnModuleInit,
+  OnModuleDestroy,
+  Logger,
+} from '@nestjs/common';
 import { QueueEvents } from 'bullmq';
 import { QUEUE_NAMES } from '../../common/queue/job-types';
 import { QueueLogger } from '../../common/queue/queue.logger';
@@ -19,7 +24,15 @@ export class DocumentQueueEvents implements OnModuleInit, OnModuleDestroy {
 
       QueueLogger.setupEvents(QUEUE_NAMES.DOCUMENT, this.events);
     } catch (e) {
-      this.logger.error(`Failed to initialize DocumentQueueEvents: ${e.message}`);
+      if (e instanceof Error) {
+        this.logger.error(
+          `Failed to initialize DocumentQueueEvents: ${e.message}`,
+        );
+      } else {
+        this.logger.error(
+          `Failed to initialize DocumentQueueEvents: ${String(e)}`,
+        );
+      }
     }
   }
 
@@ -27,8 +40,8 @@ export class DocumentQueueEvents implements OnModuleInit, OnModuleDestroy {
     if (this.events) {
       try {
         await this.events.close();
-      } catch (e) {
-         // ignore close error
+      } catch {
+        // ignore close error
       }
     }
   }

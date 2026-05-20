@@ -26,7 +26,11 @@ describe('MetricsInterceptor', () => {
 
     mockContext = {
       switchToHttp: jest.fn().mockReturnValue({
-        getRequest: () => ({ method: 'GET', route: { path: '/test' }, url: '/test' }),
+        getRequest: () => ({
+          method: 'GET',
+          route: { path: '/test' },
+          url: '/test',
+        }),
         getResponse: () => ({ statusCode: 200 }),
       }),
     };

@@ -18,11 +18,13 @@ const logger = new Logger('QueueFoundationModule');
             // Fallback strategy if redis is unavailable (prevents crash loops in local/test)
             retryStrategy: (times) => {
               if (times > 3) {
-                logger.warn(`Redis connection retries exceeded, delaying next retry...`);
+                logger.warn(
+                  `Redis connection retries exceeded, delaying next retry...`,
+                );
                 return 5000;
               }
               return Math.min(times * 100, 3000);
-            }
+            },
           },
           defaultJobOptions: {
             attempts: 3,

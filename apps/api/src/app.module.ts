@@ -1,5 +1,5 @@
-import { AppMetricsModule } from "./common/metrics/metrics.module";
-import { AppLoggerModule } from "./common/logger/logger.module";
+import { AppMetricsModule } from './common/metrics/metrics.module';
+import { AppLoggerModule } from './common/logger/logger.module';
 import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -15,7 +15,9 @@ import { PlatformModule } from './modules/platform/platform.module';
 import { TenantMiddleware } from './common/middleware/tenant.middleware';
 
 @Module({
-  imports: [AppMetricsModule, AppLoggerModule,
+  imports: [
+    AppMetricsModule,
+    AppLoggerModule,
     QueueFoundationModule,
     IamModule,
     VillageModule,
@@ -24,7 +26,7 @@ import { TenantMiddleware } from './common/middleware/tenant.middleware';
     NotificationModule,
     ImportExportModule,
     AnalyticsModule,
-    PlatformModule
+    PlatformModule,
   ],
   controllers: [AppController],
   providers: [AppService],
@@ -33,6 +35,11 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(TenantMiddleware)
-      .forRoutes('api/v1/villages', 'api/v1/citizens', 'api/v1/documents', 'api/v1/imports');
+      .forRoutes(
+        'api/v1/villages',
+        'api/v1/citizens',
+        'api/v1/documents',
+        'api/v1/imports',
+      );
   }
 }
