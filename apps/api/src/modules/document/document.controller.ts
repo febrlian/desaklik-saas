@@ -1,8 +1,20 @@
-import { Controller, Post, Body, HttpCode, HttpStatus, Logger } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  HttpCode,
+  HttpStatus,
+  Logger,
+} from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { CurrentTenant } from '../../common/decorators/tenant.decorator';
 import { QUEUE_NAMES, JOB_NAMES } from '../../common/queue/job-types';
+
+export class GenerateDocumentDto {
+  templateId: string;
+  data: Record<string, unknown>;
+}
 
 @Controller('api/v1/documents')
 export class DocumentController {
@@ -16,7 +28,7 @@ export class DocumentController {
   @HttpCode(HttpStatus.ACCEPTED)
   async generateDocument(
     @CurrentTenant() tenantId: string,
-    @Body() payload: { templateId: string; data: any },
+    @Body() payload: GenerateDocumentDto,
   ) {
     this.logger.log(`Enqueueing document generation for tenant ${tenantId}`);
 

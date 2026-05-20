@@ -97,3 +97,16 @@ This section operationalizes the architecture guidance into implementation check
 - Broad service decomposition without threshold evidence.
 - Platform migration to orchestration-heavy infrastructure by default.
 - Multi-region active-active before single-region operational maturity.
+
+### Phase 1 Performance Budgets (P0-07)
+As part of our commitment to avoiding overengineering, we are instituting conservative CI performance budgets. These budgets are enforced directly in the deployment pipeline via `pnpm test:perf`.
+
+**1. API Latency Smoke Budget**
+*   **Threshold:** p95 Latency <= 350ms, Error Rate < 1%
+*   **Rationale:** Even with minimal optimization, a shared-schema multi-tenant baseline should be fast. 350ms gives plenty of headroom for synchronous ops.
+*   **Tuning:** Modify `P95_THRESHOLD_MS` in `apps/api/scripts/smoke-test.js` when adding heavier synchronous read payloads or introducing cross-tenant aggregations.
+
+**2. Frontend Bundle Size Budget**
+*   **Threshold:** Shared JS <= 300kB, Largest Route <= 450kB
+*   **Rationale:** Since rural operators are the primary users, first-load payload is heavily correlated to perceived performance. These limits are very achievable in Next.js 14 App Router.
+*   **Tuning:** Modify `BUDGET_SHARED_JS_KB` in `apps/web/scripts/check-bundle.js` only if a globally mandated third-party package (like a specialized charting library) becomes necessary.

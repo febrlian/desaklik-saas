@@ -1,4 +1,8 @@
-import { Injectable, NestMiddleware, UnauthorizedException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NestMiddleware,
+  BadRequestException,
+} from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 
 export interface TenantRequest extends Request {
@@ -15,7 +19,9 @@ export class TenantMiddleware implements NestMiddleware {
     }
 
     if (Array.isArray(tenantId)) {
-        throw new BadRequestException('X-Tenant-Id header must be a single value');
+      throw new BadRequestException(
+        'X-Tenant-Id header must be a single value',
+      );
     }
 
     req.tenantId = tenantId;
