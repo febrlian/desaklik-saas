@@ -16,7 +16,7 @@ This tracker is aligned to `docs/phase-0/*` and intentionally avoids premature c
 | P0-02 | Define module boundaries in code folders (`apps/api/src/modules/*`) | 1d | P0-01 | Modules mapped to architecture doc with no cross-module direct DB access | Directory + README stubs merged |
 | P0-03 | Tenant context middleware and request-scoped `tenant_id` enforcement | 1d | P0-02 | Every tenant-scoped endpoint requires tenant context | Automated tests cover allow/deny paths |
 | P0-04 | Shared-schema multi-tenant DB conventions (migrations, composite indexes) | 1d | P0-03 | Tables include tenant convention fields and core composite indexes | Migration up/down verified on local DB |
-| P0-05 | Background jobs skeleton (queue + worker + retry/DLQ policy) | 1d | P0-03 | At least 3 job types run async: document generation, notification dispatch, CSV import | Queue metrics visible in logs/metrics |
+| P0-05 | Background jobs skeleton (queue + worker + retry/DLQ policy) | 1d | P0-03 | [x] At least 3 job types run async: document generation, notification dispatch, CSV import | [x] Queue metrics visible in logs/metrics |
 | P0-06 | Minimal observability baseline (request id, structured logs, latency/error metrics) | 1d | P0-03 | p50/p95 latency + error rate dashboards available | Runbook for alert response committed |
 | P0-07 | Performance budget checks in CI (API latency smoke + bundle budget) | 0.5d | P0-06 | CI fails when thresholds exceeded | Thresholds documented in implementation plan |
 | P0-08 | Backup/restore drill script and verification checklist | 0.5d | P0-04 | Successful restore to clean environment with integrity checks | Drill date + result recorded |

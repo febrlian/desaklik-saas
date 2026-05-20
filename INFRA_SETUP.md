@@ -137,3 +137,15 @@ Once the Ingress controller provisions an AWS Load Balancer, find its address:
 kubectl get ingress -n desaklik
 ```
 Point your domain's DNS (`*.desaklik.id` and `desaklik.id`) to this Load Balancer's DNS name via CNAME records.
+
+### Async Background Jobs (Phase 1 Baseline)
+We use BullMQ and Redis for background processing. This prevents heavy workloads (e.g. document generation, CSV imports) from blocking the synchronous HTTP paths.
+
+To run locally:
+1. Start Redis: `docker run -d --name redis-stack-server -p 6379:6379 redis/redis-stack-server:latest`
+2. Ensure `.env` in `apps/api` contains:
+   ```
+   REDIS_HOST=localhost
+   REDIS_PORT=6379
+   REDIS_PASSWORD=
+   ```
