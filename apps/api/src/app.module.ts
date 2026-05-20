@@ -1,3 +1,5 @@
+import { AppMetricsModule } from "./common/metrics/metrics.module";
+import { AppLoggerModule } from "./common/logger/logger.module";
 import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -13,7 +15,7 @@ import { PlatformModule } from './modules/platform/platform.module';
 import { TenantMiddleware } from './common/middleware/tenant.middleware';
 
 @Module({
-  imports: [
+  imports: [AppMetricsModule, AppLoggerModule,
     QueueFoundationModule,
     IamModule,
     VillageModule,
