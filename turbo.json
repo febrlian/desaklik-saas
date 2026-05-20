@@ -18,6 +18,12 @@
     "test": {
       "dependsOn": ["^build"],
       "outputs": ["coverage/**"]
+    },
+    "test:smoke": {
+      "dependsOn": ["build"]
+    },
+    "test:budget": {
+      "dependsOn": ["build"]
     }
   }
 }
