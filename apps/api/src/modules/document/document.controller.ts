@@ -1,4 +1,14 @@
-import { Controller, Post, Get, Param, Body, HttpCode, HttpStatus, Logger, NotFoundException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Param,
+  Body,
+  HttpCode,
+  HttpStatus,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { CurrentTenant } from '../../common/decorators/tenant.decorator';
@@ -36,15 +46,19 @@ export class DocumentController {
     });
 
     // Enqueue the job with the DB record ID
-    await this.documentQueue.add(JOB_NAMES.DOCUMENT_GENERATE, {
-      tenantId,
-      templateId: payload.templateId,
-      data: payload.data,
-      jobRecordId: documentJob.id,
-      metadata: { requestedAt: new Date().toISOString() },
-    }, {
-      jobId: documentJob.id // Bind bullmq jobId to our DB ID for easy tracking
-    });
+    await this.documentQueue.add(
+      JOB_NAMES.DOCUMENT_GENERATE,
+      {
+        tenantId,
+        templateId: payload.templateId,
+        data: payload.data,
+        jobRecordId: documentJob.id,
+        metadata: { requestedAt: new Date().toISOString() },
+      },
+      {
+        jobId: documentJob.id, // Bind bullmq jobId to our DB ID for easy tracking
+      },
+    );
 
     return {
       message: 'Document generation job accepted',

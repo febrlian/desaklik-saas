@@ -25,13 +25,15 @@ export class DocumentWorker extends WorkerHost {
   async process(job: Job<DocumentGeneratePayload, any, string>): Promise<any> {
     const { tenantId, templateId, data, jobRecordId } = job.data;
 
-    this.logger.log(`Starting job [${job.name}] ID [${job.id}] for tenant [${tenantId}]`);
+    this.logger.log(
+      `Starting job [${job.name}] ID [${job.id}] for tenant [${tenantId}]`,
+    );
 
     if (job.name === JOB_NAMES.DOCUMENT_GENERATE) {
       try {
         await this.prisma.documentJob.update({
           where: { id: jobRecordId },
-          data: { status: 'PROCESSING' }
+          data: { status: 'PROCESSING' },
         });
 
         this.logger.log(`Processing document template [${templateId}]...`);
@@ -47,7 +49,9 @@ export class DocumentWorker extends WorkerHost {
 
           // Simulate retryable error if requested (transient)
           if ('throwTransient' in data && data.throwTransient) {
-            throw new Error('Network timeout reaching document rendering service');
+            throw new Error(
+              'Network timeout reaching document rendering service',
+            );
           }
         }
 
@@ -55,22 +59,28 @@ export class DocumentWorker extends WorkerHost {
 
         await this.prisma.documentJob.update({
           where: { id: jobRecordId },
-          data: { status: 'COMPLETED', resultUrl: documentUrl }
+          data: { status: 'COMPLETED', resultUrl: documentUrl },
         });
 
-        this.logger.log(`Successfully completed job [${job.name}] ID [${job.id}]`);
+        this.logger.log(
+          `Successfully completed job [${job.name}] ID [${job.id}]`,
+        );
 
         return {
           status: 'success',
           documentUrl,
         };
       } catch (error) {
-        await this.prisma.documentJob.update({
-          where: { id: jobRecordId },
-          data: { status: 'FAILED' }
-        }).catch((err: unknown) => {
-          this.logger.error(`Failed to update job status to FAILED: ${err}`);
-        });
+        await this.prisma.documentJob
+          .update({
+            where: { id: jobRecordId },
+            data: { status: 'FAILED' },
+          })
+          .catch((err: unknown) => {
+            this.logger.error(
+              `Failed to update job status to FAILED: ${String(err)}`,
+            );
+          });
 
         throw error;
       }

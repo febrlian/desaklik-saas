@@ -6,14 +6,29 @@ import { QUEUE_NAMES } from '../../common/queue/job-types';
 
 describe('DocumentController', () => {
   let controller: DocumentController;
-  let mockPrisma: any;
-  let mockQueue: any;
+  let mockPrisma: {
+    documentJob: {
+      create: jest.Mock;
+      findFirst: jest.Mock;
+    };
+  };
+  let mockQueue: {
+    add: jest.Mock;
+  };
 
   beforeEach(async () => {
     mockPrisma = {
       documentJob: {
-        create: jest.fn().mockResolvedValue({ id: 'doc-job-1', tenantId: 'tenant-1', status: 'PENDING' }),
-        findFirst: jest.fn().mockResolvedValue({ id: 'doc-job-1', tenantId: 'tenant-1', status: 'COMPLETED' }),
+        create: jest.fn().mockResolvedValue({
+          id: 'doc-job-1',
+          tenantId: 'tenant-1',
+          status: 'PENDING',
+        }),
+        findFirst: jest.fn().mockResolvedValue({
+          id: 'doc-job-1',
+          tenantId: 'tenant-1',
+          status: 'COMPLETED',
+        }),
       },
     };
 
@@ -38,7 +53,7 @@ describe('DocumentController', () => {
 
     expect(result.jobId).toBe('doc-job-1');
     expect(mockPrisma.documentJob.create).toHaveBeenCalledWith({
-      data: { tenantId: 'tenant-1', status: 'PENDING' }
+      data: { tenantId: 'tenant-1', status: 'PENDING' },
     });
     expect(mockQueue.add).toHaveBeenCalled();
   });
