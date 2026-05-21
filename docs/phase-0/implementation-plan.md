@@ -31,6 +31,7 @@ Deliver a production-ready baseline with tenant safety, predictable performance,
 - Instrument API/job latency, errors, and queue metrics.
 - Set enforceable budgets in CI for obvious regressions.
 
+n> Execution Playbook cross-link: [Capacity Milestones](../runbooks/capacity-milestones.md)
 ### C) Operations and reliability
 
 - Publish restore procedure.
