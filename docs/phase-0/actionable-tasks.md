@@ -12,7 +12,7 @@ All tasks are sized to roughly **0.5–2 days**, dependency-ordered, and executi
 | T04 | Enforce tenant-scoped repository patterns + tests | 1d | T03 |
 | T05 | Apply tenant-aware schema conventions in migrations | 1d | T04 |
 | T06 | Add queue + worker skeleton for heavy jobs | 1d | T03 |
-| T07 | Implement document generation async job end-to-end | 1d | T06 |
+| T07 | [x] Implement document generation async job end-to-end | 1d | T06 |
 | T08 | Implement notification dispatch async job | 1d | T06 |
 | T09 | Implement bulk import async job | 1d | T06 |
 | T10 | Add observability baseline (logs, metrics, traces-lite) | 1d | T04, T06 |

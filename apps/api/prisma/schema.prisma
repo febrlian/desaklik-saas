@@ -4,7 +4,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model Tenant {
@@ -15,9 +14,25 @@ model Tenant {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  users     User[]
+  users             User[]
+  villages          VillageProfile[]
+  citizens          Citizen[]
+  documentTemplates DocumentTemplate[]
+  documentJobs      DocumentJob[]
 
   @@map("tenants")
+}
+
+model Role {
+  id          String   @id @default(uuid())
+  name        String   @unique // e.g. KepalaDesa, Sekretaris, Kasi, Operator, Warga
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  users       User[]
+
+  @@map("roles")
 }
 
 model User {
@@ -32,17 +47,71 @@ model User {
   tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   role      Role     @relation(fields: [roleId], references: [id])
 
+  @@index([tenantId])
   @@map("users")
 }
 
-model Role {
+model VillageProfile {
   id          String   @id @default(uuid())
-  name        String   @unique // KepalaDesa, Sekretaris, Kasi, Operator, Warga
-  description String?
+  tenantId    String   @unique // 1:1 with Tenant in most cases, but conceptually owned
+  name        String
+  province    String
+  regency     String
+  district    String
+  headName    String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  users       User[]
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
-  @@map("roles")
+  @@index([tenantId])
+  @@map("village_profiles")
+}
+
+model Citizen {
+  id          String   @id @default(uuid())
+  tenantId    String
+  nik         String
+  kk          String
+  name        String
+  birthDate   DateTime
+  address     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, nik]) // Tenant-scoped uniqueness
+  @@index([tenantId])
+  @@index([tenantId, kk]) // Composite index prioritizing tenant reads
+  @@map("citizens")
+}
+
+model DocumentTemplate {
+  id          String   @id @default(uuid())
+  tenantId    String
+  name        String
+  content     String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("document_templates")
+}
+
+model DocumentJob {
+  id          String   @id @default(uuid())
+  tenantId    String
+  status      String   // PENDING, PROCESSING, COMPLETED, FAILED
+  resultUrl   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, status])
+  @@map("document_jobs")
 }
