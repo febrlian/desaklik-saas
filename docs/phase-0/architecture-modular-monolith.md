@@ -54,6 +54,7 @@ Not default in Phase 0: service mesh, multi-cluster orchestration, cross-region 
 ---
 
 ## 83,000 Village Scale Readiness (without premature microservices)
+n> Execution Playbook cross-link: [Capacity Milestones](../runbooks/capacity-milestones.md)
 
 > Execution cross-link: [Implementation plan scale section](./implementation-plan.md#83000-village-scale-readiness-without-premature-microservices)
 

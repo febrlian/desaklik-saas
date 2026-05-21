@@ -7,9 +7,7 @@
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "test": "turbo run test",
-    "test:perf": "turbo run test:smoke test:budget",
-    "db:backup": "./scripts/db-backup.sh",
-    "db:restore": "./scripts/db-restore.sh"
+    "test:perf": "turbo run test:smoke test:budget"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
