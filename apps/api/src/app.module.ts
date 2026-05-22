@@ -1,3 +1,4 @@
+import { PrismaModule } from './common/prisma/prisma.module';
 import { AppMetricsModule } from './common/metrics/metrics.module';
 import { AppLoggerModule } from './common/logger/logger.module';
 import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
@@ -16,6 +17,7 @@ import { TenantMiddleware } from './common/middleware/tenant.middleware';
 
 @Module({
   imports: [
+    PrismaModule,
     AppMetricsModule,
     AppLoggerModule,
     QueueFoundationModule,
