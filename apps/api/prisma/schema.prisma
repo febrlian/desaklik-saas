@@ -14,11 +14,12 @@ model Tenant {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  users             User[]
-  villages          VillageProfile[]
-  citizens          Citizen[]
-  documentTemplates DocumentTemplate[]
-  documentJobs      DocumentJob[]
+  users              User[]
+  villages           VillageProfile[]
+  citizens           Citizen[]
+  documentTemplates  DocumentTemplate[]
+  documentJobs       DocumentJob[]
+  notificationEvents NotificationEvent[]
 
   @@map("tenants")
 }
@@ -30,7 +31,7 @@ model Role {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  users       User[]
+  users User[]
 
   @@map("roles")
 }
@@ -44,42 +45,42 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  role      Role     @relation(fields: [roleId], references: [id])
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  role   Role   @relation(fields: [roleId], references: [id])
 
   @@index([tenantId])
   @@map("users")
 }
 
 model VillageProfile {
-  id          String   @id @default(uuid())
-  tenantId    String   @unique // 1:1 with Tenant in most cases, but conceptually owned
-  name        String
-  province    String
-  regency     String
-  district    String
-  headName    String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(uuid())
+  tenantId  String   @unique // 1:1 with Tenant in most cases, but conceptually owned
+  name      String
+  province  String
+  regency   String
+  district  String
+  headName  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@map("village_profiles")
 }
 
 model Citizen {
-  id          String   @id @default(uuid())
-  tenantId    String
-  nik         String
-  kk          String
-  name        String
-  birthDate   DateTime
-  address     String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(uuid())
+  tenantId  String
+  nik       String
+  kk        String
+  name      String
+  birthDate DateTime
+  address   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, nik]) // Tenant-scoped uniqueness
   @@index([tenantId])
@@ -88,30 +89,45 @@ model Citizen {
 }
 
 model DocumentTemplate {
-  id          String   @id @default(uuid())
-  tenantId    String
-  name        String
-  content     String
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(uuid())
+  tenantId  String
+  name      String
+  content   String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@map("document_templates")
 }
 
 model DocumentJob {
-  id          String   @id @default(uuid())
-  tenantId    String
-  status      String   // PENDING, PROCESSING, COMPLETED, FAILED
-  resultUrl   String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(uuid())
+  tenantId  String
+  status    String // PENDING, PROCESSING, COMPLETED, FAILED
+  resultUrl String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId, status])
   @@map("document_jobs")
+}
+
+model NotificationEvent {
+  id        String   @id @default(uuid())
+  tenantId  String
+  status    String // PENDING, PROCESSING, COMPLETED, FAILED
+  provider  String // WA, EMAIL, SMS
+  recipient String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, status])
+  @@map("notification_events")
 }
