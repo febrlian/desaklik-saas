@@ -42,6 +42,7 @@ export class AppModule implements NestModule {
         'api/v1/citizens',
         'api/v1/documents',
         'api/v1/imports',
+        'api/v1/notifications',
       );
   }
 }
