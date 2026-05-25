@@ -25,10 +25,17 @@ export class NotificationWorker extends WorkerHost {
   }
 
   async process(job: Job<NotificationSendPayload, any, string>): Promise<any> {
-    const { tenantId, eventRecordId, provider, recipient, data } = job.data;
+    const {
+      tenantId,
+      eventRecordId,
+      provider,
+      recipient,
+      data,
+      correlationId,
+    } = job.data;
 
     this.logger.log(
-      `Starting job [${job.name}] ID [${job.id}] for tenant [${tenantId}] to [${recipient}] via [${provider}]`,
+      `[${correlationId}] Starting job [${job.name}] ID [${job.id}] for tenant [${tenantId}] to [${recipient}] via [${provider}]`,
     );
 
     if (job.name === JOB_NAMES.NOTIFICATION_SEND) {

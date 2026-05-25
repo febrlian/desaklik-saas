@@ -15,7 +15,7 @@ All tasks are sized to roughly **0.5–2 days**, dependency-ordered, and executi
 | T07 | [x] Implement document generation async job end-to-end | 1d | T06 |
 | T08 | [x] Implement notification dispatch async job | 1d | T06 |
 | T09 | [x] Implement bulk import async job | 1d | T06 |
-| T10 | Add observability baseline (logs, metrics, traces-lite) | 1d | T04, T06 |
+| T10 | [x] Add observability baseline (logs, metrics, traces-lite) | 1d | T04, T06 |
 | T11 | Define and enforce initial SLO thresholds in dashboards | 0.5d | T10 |
 | T12 | Create DB index review + slow-query runbook | 0.5d | T05, T10 |
 | T13 | Run backup/restore drill and publish evidence | 0.5d | T05 |

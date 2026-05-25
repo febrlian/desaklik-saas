@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
+import { CorrelationId } from '../../common/decorators/correlation-id.decorator';
 import { CurrentTenant } from '../../common/decorators/tenant.decorator';
 import { QUEUE_NAMES, JOB_NAMES } from '../../common/queue/job-types';
 import { PrismaService } from '../../common/prisma/prisma.service';
@@ -34,8 +35,11 @@ export class DocumentController {
   async generateDocument(
     @CurrentTenant() tenantId: string,
     @Body() payload: GenerateDocumentDto,
+    @CorrelationId() correlationId: string,
   ) {
-    this.logger.log(`Enqueueing document generation for tenant ${tenantId}`);
+    this.logger.log(
+      `[${correlationId}] Enqueueing document generation for tenant ${tenantId}`,
+    );
 
     // Create DB record to track the job
     const documentJob = await this.prisma.documentJob.create({
@@ -53,6 +57,7 @@ export class DocumentController {
         templateId: payload.templateId,
         data: payload.data,
         jobRecordId: documentJob.id,
+        correlationId,
         metadata: { requestedAt: new Date().toISOString() },
       },
       {
