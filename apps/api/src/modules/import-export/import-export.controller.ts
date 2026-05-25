@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
+import { CorrelationId } from '../../common/decorators/correlation-id.decorator';
 import { CurrentTenant } from '../../common/decorators/tenant.decorator';
 import { QUEUE_NAMES, JOB_NAMES } from '../../common/queue/job-types';
 import { PrismaService } from '../../common/prisma/prisma.service';
@@ -34,8 +35,11 @@ export class ImportExportController {
   async importCitizens(
     @CurrentTenant() tenantId: string,
     @Body() payload: ImportJobDto,
+    @CorrelationId() correlationId: string,
   ) {
-    this.logger.log(`Enqueueing citizen import for tenant ${tenantId}`);
+    this.logger.log(
+      `[${correlationId}] Enqueueing citizen import for tenant ${tenantId}`,
+    );
 
     const importJob = await this.prisma.importJob.create({
       data: {
@@ -51,6 +55,7 @@ export class ImportExportController {
       {
         tenantId,
         jobRecordId: importJob.id,
+        correlationId,
         fileUrl: payload.fileUrl,
         target: 'citizens',
         data: payload.data || {},

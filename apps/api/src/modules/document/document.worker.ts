@@ -23,10 +23,10 @@ export class DocumentWorker extends WorkerHost {
   }
 
   async process(job: Job<DocumentGeneratePayload, any, string>): Promise<any> {
-    const { tenantId, templateId, data, jobRecordId } = job.data;
+    const { tenantId, templateId, data, jobRecordId, correlationId } = job.data;
 
     this.logger.log(
-      `Starting job [${job.name}] ID [${job.id}] for tenant [${tenantId}]`,
+      `[${correlationId}] Starting job [${job.name}] ID [${job.id}] for tenant [${tenantId}]`,
     );
 
     if (job.name === JOB_NAMES.DOCUMENT_GENERATE) {

@@ -1,0 +1,26 @@
+groups:
+  - name: DesaKlik_Phase0_Baseline_Alerts
+    rules:
+      # P0-06: Error Rate > 1%
+      - alert: HighErrorRate
+        expr: >
+          rate(http_requests_total{status_code=~"5.."}[5m])
+          /
+          rate(http_requests_total[5m]) * 100 > 1
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High 5xx Error Rate on {{ $labels.route }}"
+          description: "The error rate for {{ $labels.method }} {{ $labels.route }} has exceeded 1% over the last 5 minutes."
+
+      # P0-06: p95 Latency > 350ms for core endpoints
+      - alert: HighAPILatency
+        expr: >
+          histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, route)) > 0.35
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High p95 Latency on {{ $labels.route }}"
+          description: "The p95 latency for {{ $labels.route }} has exceeded 350ms."

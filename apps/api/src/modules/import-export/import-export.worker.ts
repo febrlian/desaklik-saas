@@ -24,10 +24,11 @@ export class ImportWorker extends WorkerHost {
   }
 
   async process(job: Job<ImportPayload, any, string>): Promise<any> {
-    const { tenantId, jobRecordId, fileUrl, target, data } = job.data;
+    const { tenantId, jobRecordId, fileUrl, target, data, correlationId } =
+      job.data;
 
     this.logger.log(
-      `Starting job [${job.name}] ID [${job.id}] for tenant [${tenantId}] targeting [${target}]`,
+      `[${correlationId}] Starting job [${job.name}] ID [${job.id}] for tenant [${tenantId}] targeting [${target}]`,
     );
 
     if (job.name === JOB_NAMES.IMPORT_PROCESS) {

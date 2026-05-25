@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
+import { CorrelationId } from '../../common/decorators/correlation-id.decorator';
 import { CurrentTenant } from '../../common/decorators/tenant.decorator';
 import { QUEUE_NAMES, JOB_NAMES } from '../../common/queue/job-types';
 import { PrismaService } from '../../common/prisma/prisma.service';
@@ -37,8 +38,11 @@ export class NotificationController {
   async sendNotification(
     @CurrentTenant() tenantId: string,
     @Body() payload: SendNotificationDto,
+    @CorrelationId() correlationId: string,
   ) {
-    this.logger.log(`Enqueueing notification dispatch for tenant ${tenantId}`);
+    this.logger.log(
+      `[${correlationId}] Enqueueing notification dispatch for tenant ${tenantId}`,
+    );
 
     const notificationEvent = await this.prisma.notificationEvent.create({
       data: {
@@ -58,6 +62,7 @@ export class NotificationController {
         templateId: payload.templateId,
         data: payload.data,
         eventRecordId: notificationEvent.id,
+        correlationId,
         metadata: { requestedAt: new Date().toISOString() },
       },
       {
