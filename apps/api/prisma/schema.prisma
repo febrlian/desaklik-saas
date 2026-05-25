@@ -20,6 +20,7 @@ model Tenant {
   documentTemplates  DocumentTemplate[]
   documentJobs       DocumentJob[]
   notificationEvents NotificationEvent[]
+  importJobs         ImportJob[]
 
   @@map("tenants")
 }
@@ -130,4 +131,20 @@ model NotificationEvent {
 
   @@index([tenantId, status])
   @@map("notification_events")
+}
+
+model ImportJob {
+  id            String   @id @default(uuid())
+  tenantId      String
+  status        String // PENDING, PROCESSING, COMPLETED, FAILED
+  target        String // e.g. citizens
+  fileUrl       String
+  rowsProcessed Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, status])
+  @@map("import_jobs")
 }
